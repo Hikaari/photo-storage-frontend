@@ -40,7 +40,7 @@ export const PhotoCard = ({ photo }: PhotoCardProps) => {
           <Calendar className="h-3 w-3" />
           <span>{formatDate(photo.created_at)}</span>
         </div>
-        {photo.hashtags.length > 0 && (
+        {photo.hashtags && photo.hashtags.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {photo.hashtags.slice(0, 3).map((hashtag) => (
               <Badge key={hashtag.id} variant="secondary" className="text-xs">
