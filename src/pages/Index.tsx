@@ -1,11 +1,24 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import Gallery from './Gallery';
+import { getAuthLoginUrl, setAuthToken } from '@/lib/api';
 
 const Index = () => {
-  const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { user, loading, refreshUser } = useAuth();
+
+  useEffect(() => {
+    // Check if we have a token in the URL (from OAuth callback)
+    const token = searchParams.get('token');
+    if (token) {
+      setAuthToken(token);
+      refreshUser().then(() => {
+        navigate('/');
+      });
+    }
+  }, [searchParams, navigate, refreshUser]);
 
   useEffect(() => {
     if (!loading && !user) {
