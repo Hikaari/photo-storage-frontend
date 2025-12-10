@@ -12,13 +12,18 @@ RUN npm run build
 # ---- runtime stage ----
 FROM nginx:alpine
 
-# nginx слушает 80
-EXPOSE 80
+# Удалим дефолтный конфиг, чтобы не мешался
+RUN rm /etc/nginx/conf.d/default.conf
 
-# если билд кладёт файлы в dist:
+# Кладём наш SPA-конфиг
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+
+# Кладём собранный фронт
 COPY --from=build /app/dist /usr/share/nginx/html
-
-# если у тебя папка build, а не dist — вместо этого:
+# если у тебя build вместо dist:
 # COPY --from=build /app/build /usr/share/nginx/html
 
+EXPOSE 80
+
 CMD ["nginx", "-g", "daemon off;"]
+
