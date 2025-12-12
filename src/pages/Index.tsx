@@ -9,7 +9,6 @@ const Index = () => {
   const [searchParams] = useSearchParams();
   const { user, loading, refreshUser } = useAuth();
 
-
   useEffect(() => {
     // Check if we have a token in the URL (from OAuth callback)
     const token = searchParams.get('token');
