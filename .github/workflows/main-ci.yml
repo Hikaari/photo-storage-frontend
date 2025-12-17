@@ -2,7 +2,7 @@ name: Main CI (tag vN + push image)
 
 on:
   push:
-    branches: ["main"]
+    branches: ["fix/ci-add-pipeline"]
 
 permissions:
   contents: write
