@@ -1,22 +1,36 @@
 import axios, { AxiosInstance } from 'axios';
 
-// API base URL - can be configured via environment or defaults
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+// API base URL - fetched from /settings endpoint
+const apiBaseUrlPromise: Promise<string> = (async () => {
+  try {
+    const response = await fetch('/settings');
+    if (!response.ok) {
+      throw new Error(`Settings endpoint failed with status ${response.status}`);
+    }
+    const data = await response.json();
+    return data.api_base_url;
+  } catch (error) {
+    console.error("Failed to fetch API settings, falling back to default.", error);
+    return import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+  }
+})();
+
 
 class ApiClient {
   private client: AxiosInstance;
 
   constructor() {
     this.client = axios.create({
-      baseURL: API_BASE_URL,
+      // baseURL will be set by the interceptor
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
-    // Add request interceptor to include auth token
+    // Add request interceptor to include auth token and set base URL
     this.client.interceptors.request.use(
-      (config) => {
+      async (config) => {
+        config.baseURL = await apiBaseUrlPromise;
         const token = localStorage.getItem('auth_token');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
@@ -99,7 +113,10 @@ class ApiClient {
 export const apiClient = new ApiClient();
 
 // Auth helper functions
-export const getAuthLoginUrl = () => `${API_BASE_URL}/auth/login`;
+export const getAuthLoginUrl = async () => {
+  const baseUrl = await apiBaseUrlPromise;
+  return `${baseUrl}/auth/login`;
+};
 
 export const setAuthToken = (token: string) => {
   localStorage.setItem('auth_token', token);
