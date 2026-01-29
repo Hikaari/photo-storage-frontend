@@ -29,9 +29,10 @@ const Login = () => {
     }
   }, [user, loading, navigate]);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     // Redirect to backend login endpoint
-    window.location.href = getAuthLoginUrl();
+    const loginUrl = await getAuthLoginUrl();
+    window.location.href = loginUrl;
   };
 
   if (loading) {
