@@ -12,6 +12,12 @@ RUN npm run build
 # ---- nginx stage ----
 FROM nginx:alpine
 
+
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY nginx/settings.json.template /etc/nginx/settings.json.template
+COPY docker-entrypoint.d/10-settings.sh /docker-entrypoint.d/10-settings.sh
+RUN chmod +x /docker-entrypoint.d/10-settings.sh
+
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
 COPY --from=build /app/dist /usr/share/nginx/html
