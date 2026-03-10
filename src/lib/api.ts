@@ -1,5 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 
+const DEFAULT_API_BASE_URL = 'http://localhost:8000/api/v1';
+
 // API base URL - fetched from /settings endpoint
 const apiBaseUrlPromise: Promise<string> = (async () => {
   try {
@@ -11,7 +13,7 @@ const apiBaseUrlPromise: Promise<string> = (async () => {
     return data.api_base_url;
   } catch (error) {
     console.error("Failed to fetch API settings, falling back to default.", error);
-    return import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+    return DEFAULT_API_BASE_URL;
   }
 })();
 
